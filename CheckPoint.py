@@ -270,3 +270,39 @@ def conecta_BD():
         conexao = True
 
     return(conexao,inst_SQL,conn)
+
+def recuperar_todos_os_registros(cursor, nome_tabela):
+    try:
+        query = f"SELECT * FROM {nome_tabela}"
+        cursor.execute(query)
+        registros = cursor.fetchall()
+        return registros
+    except Exception as e:
+        print(f"Erro ao buscar registros de {nome_tabela}: {e}")
+        return []
+
+def gerar_relatorio_completo(cursor):
+    nomes_tabelas = ["TB_PROFESSORES", "TB_ENDERECOS"]
+
+    for nome_tabela in nomes_tabelas:
+        print(f"Registros na tabela '{nome_tabela}':")
+        registros = recuperar_todos_os_registros(cursor, nome_tabela)
+
+        if registros:
+            for registro in registros:
+                print(registro)
+            print(f"Total de registros em '{nome_tabela}': {len(registros)}")
+        else:
+            print(f"Nenhum registro encontrado na tabela '{nome_tabela}'")
+        print("---------------------------------------------------")
+
+
+conexao, inst_SQL, conn = conecta_BD()
+
+if conexao:
+    gerar_relatorio_completo(inst_SQL)
+
+    inst_SQL.close()
+    conn.close()
+else:
+    print("Não foi possível estabelecer uma conexão com o banco de dados.")
